@@ -1,21 +1,106 @@
 ---
-title: "Simple document"
+title: "Data Wrangling 1"
+author: "Zakari Billo"
 output: html_document
 ---
 
-I'm an R Markdown document! 
+I'm an R Markdown document! (option+cmd+i to open a new code chunk)
 
-# Section 1
-
-Here's a **code chunk** that samples from 
-a _normal distribution_:
+# Libraries
 
 ```{r}
-samp = rnorm(100)
-length(samp)
+library(tidyverse)
+library(readxl)
+library(haven)
 ```
 
-# Section 2
+Let's import a dataset
 
-I can take the mean of the sample, too!
-The mean is `r mean(samp)`.
+```{r}
+litters_df = 
+  read_csv("data/FAS_litters.csv")
+```
+
+Look at your data!!
+
+```{r}
+names(litters_df)
+```
+
+Update names in 'litters_df'
+
+```{r}
+litters_df = 
+  janitor::clean_names(litters_df)
+```
+
+Look at your data!!
+
+```{r}
+names(litters_df)
+```
+
+sometimes skimming data is neat!
+
+```{r}
+skimr::skim(litters_df)
+```
+
+#fix missingness
+
+```{r}
+litters_df = 
+  read_csv("data/FAS_litters.csv", na = c("NA", ".", ""))
+```
+
+import FAS_pups data set
+
+```{r}
+pups_df = 
+  read_csv(
+    "data/FAS_pups.csv", 
+    skip = 3,
+    na = c("NA", ".", ""))
+
+janitor::clean_names(pups_df)
+```
+
+lets clean names
+
+```{r}
+janitor::clean_names(pups_df)
+```
+
+## okay what about excel
+
+CSVs are really great but sometimes you get an excel file 
+
+```{r}
+mlb_df = 
+  read_excel("data/mlb11.xlsx")
+```
+
+import LoTR word counts
+
+```{r}
+fotr_df = 
+  read_excel("data/LoTR_Words.xlsx", range = "B3:D6")
+```
+
+## SAS Data 
+
+import PULSE data 
+```{r}
+sas_df = 
+  read_sas("data/public_pulse_data.sas7bdat") 
+
+sas_df = janitor::clean_names(sas_df)
+```
+
+## why do i hate read.csv so much??
+
+```{r, eval = FALSE}
+litters_df_base = 
+  read.csv("data/FAS_litters.csv")
+```
+
