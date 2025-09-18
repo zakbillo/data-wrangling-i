@@ -1,0 +1,32 @@
+---
+title: "Data Wrangling 1"
+author: "Zakari Billo"
+output: html_document
+---
+
+I'm an R Markdown document! (option+cmd+i to open a new code chunk)
+
+# Libraries
+
+```{r}
+library(tidyverse)
+```
+
+Let's import the datasets
+
+```{r}
+litters_df = 
+  read_csv("data/FAS_litters.csv", na = c("NA", ".", ""))
+
+janitor::clean_names(litters_df)
+
+pups_df = 
+  read_csv(
+    "data/FAS_pups.csv", 
+    skip = 3,
+    na = c("NA", ".", ""))
+
+janitor::clean_names(pups_df)
+```
+
+
