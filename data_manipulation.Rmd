@@ -16,9 +16,9 @@ Let's import the datasets
 
 ```{r}
 litters_df = 
-  read_csv("data/FAS_litters.csv", na = c("NA", ".", ""))
+    read_csv("./data/FAS_litters.csv", na = c("NA", ".", ""))
 
-janitor::clean_names(litters_df)
+litters_df <- janitor::clean_names(litters_df)
 
 pups_df = 
   read_csv(
@@ -26,7 +26,126 @@ pups_df =
     skip = 3,
     na = c("NA", ".", ""))
 
-janitor::clean_names(pups_df)
+pups_df <- janitor::clean_names(pups_df)
 ```
 
+```{r}
+filter(litters_df, group, litter_number, gd0_weight)
+```
+filter a range
+
+```{r}
+filter(litters_df, group:gd_of_birth)
+```
+
+remove column names 
+```{r}
+filter(litters_df, -pups_survive)
+```
+
+rename with filter
+```{r}
+filter(litters_df, GROUP = group, LiTtEr_NuMbEr = litter_number)
+```
+or rename with rename 
+
+```{r}
+rename(litters_df, GROUP = group, LiTtEr_NuMbEr = litter_number)
+```
+
+filter a prefix 
+
+```{r}
+filter(litters_df, starts_with("gd"))
+```
+
+filter, reorganize without discarding
+
+```{r}
+filter(litters_df, litter_number, pups_survive, everything())
+```
+relocate does something similar 
+
+```{r}
+relocate(litters_df, litter_number, pups_survive)
+```
+learning assessment 
+
+```{r}
+filter(pups_df, litter_number, sex, pd_ears) 
+```
+other ways to filter...
+```{r}
+
+filter(litters_df, gd_of_birth == 20)
+filter(litters_df, pups_born_alive >= 2)
+filter(litters_df, pups_survive != 4)
+filter(litters_df, !(pups_survive == 4))
+filter(litters_df, group %in% c("Con7", "Con8"))
+filter(litters_df, group == "Con7" & gd_of_birth == 20)
+
+```
+
+using drop_na to fix missingness
+
+```{r}
+drop_na(litters_df) #will remove any row with a missing value
+
+drop_na(litters_df, wt_increase) #will remove rows for which wt_increase is missing.
+```
+learning assessment 
+
+```{r}
+filter(pups_df, sex == 1)
+
+filter(pups_df, pd_walk < 11, sex == 1)
+```
+
+mutate
+
+```{r}
+mutate(litters_df, 
+       wt_gain = gd18_weight - gd0_weight,
+       group = str_to_lower(group))
+```
+
+arrange 
+
+```{r}
+arrange(litters_df, pups_born_alive)
+
+arrange(litters_df, desc(group), pups_born_alive)
+
+arrange(litters_df, gd0_weight)
+```
+
+use pipes to avoid bad bad nesting (cmd+shift+m for |>)
+
+prefernce is to have opening mutate( or closing ) on a separate line
+
+```{r}
+litters_df <-
+    read_csv("./data/FAS_litters.csv", na = c("NA", ".", "")) |>
+    janitor::clean_names() |>
+    select(
+      group, litter_number, starts_with("gd")) |>
+    drop_na() |>
+    mutate(
+      wt_gain = gd18_weight - gd0_weight
+      )
+
+```
+ 
+learning assessment 
+
+```{r}
+pups_df <- 
+    read_csv("data/FAS_pups.csv", skip = 3, na = c("NA", ".", "")) |>
+    janitor::clean_names() |>
+    filter(sex == 1) |>
+    select(-pd_ears) |>
+    mutate(
+      pd_piv_ge7 = pd_pivot >= 7
+    )
+```
 
